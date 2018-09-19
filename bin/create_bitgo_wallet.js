@@ -1,9 +1,19 @@
 var bitgo = require("../lib/bitgoclient");
 
+const optionDefinitions = [
+    { name: "passphrase", type: String},
+    { name: "label", type: String},
+
+]
+
+const commandLineArgs = require('command-line-args');
+const options = commandLineArgs(optionDefinitions);
+console.log(options);
+
 var wallet;
 var params = {
-    "passphrase": "76YB2T5GZYL4D615KWAP",
-    "label": "TBTC Faucet Wallet"
+    "passphrase": options.passphrase,
+    "label": options.label
 }
 console.log("attempting to create Faucet tbtc wallet: "+params.label);
 bitgo.coin('tbtc').wallets()

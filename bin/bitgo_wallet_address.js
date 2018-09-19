@@ -13,15 +13,12 @@ var wallets = bitgo.coin('tbtc').wallets();
 
 var walletId = options.wallet_id;
 console.log("walletId = "+walletId);
-var data = {
-    "type": "bitcoin",
-    "id": walletId,
-};
-wallets.get(data, function callback(err, wallet) {
+
+bitgo.coin('tbtc').wallets().get({ "id": walletId }, function callback(err, wallet) {
     if (err) {
-        // handle error
+        throw err;
     }
-    // Use wallet object here
-    console.dir(wallet);
-    console.dir("Balance = "+wallet.balance());
+    wallet.createAddress({ "chain": 0 }, function callback(err, address) {
+        console.dir(address);
+    });
 });

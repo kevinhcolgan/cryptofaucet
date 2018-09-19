@@ -1,7 +1,7 @@
 var bitgo = require("../lib/bitgoclient");
-var constants = require("../app/faucet_constants");
+var constants = require("../lib/faucet_constants");
 
-let faucetWalletId = constants.FAUCET_WALLET_ID;
+let faucetWalletId = constants.FAUCET_TBTC_WALLET_ID;
 
 var wallets = bitgo.coin('tbtc').wallets();
 var data = {
