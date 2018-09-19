@@ -10,7 +10,7 @@ faucet_constants.TBTC_SYMBOL = "tbtc";
 faucet_constants.FAUCET_TBTC_WALLET_ID = TBTC_FAUCET_WALLET_ID;
 faucet_constants.FAUCET_TBTC_WALLET_ADDRESS = TBTC_FAUCET_WALLET_ADDRESS;
 faucet_constants.TEST_TBTC_CLIENT_WALLET_ID = TBTC_CLIENT_WALLET_ID;
-faucet_constants.FAUCET_SEND_AMOUNT_TBTC = 0.001;
+faucet_constants.FAUCET_SEND_AMOUNT_TBTC = 0.0001;
 
 
 
@@ -21,11 +21,12 @@ var tbtcWallets = bitgo.coin(tbtcSymbol).wallets();
 
 
 describe("Crypto Faucet", function() {
+    //the tests take quite long, so increase the default to 10 seconds
     this.timeout(10000);
     describe("tBTC Faucet initialisation", function() {
         it("checks the balance of the TBTC Faucet is greater than 0", function(done) {
             //check balance of wallet is available
-            cryptofaucet.getBalance(tbtcSymbol,function(walletBalance)
+            cryptofaucet.getBalance(tbtcSymbol,function(err,walletBalance)
             {
                 console.log("walletBalance = "+walletBalance)
                 expect(walletBalance).to.be.above(0);
@@ -47,28 +48,26 @@ describe("Crypto Faucet", function() {
                 var rxAddress;
                 //https://www.bitgo.com/api/v2/#create-wallet-address
                 testBtcWallet.createAddress({ "chain": 0 }, function callback(err, address) {
-                    if (err) {
-                        throw err;
-                    }
+                    expect(err).to.be.null;
                     console.dir(address);
                     rxAddress = address.address;
 
                     //send a small amount of tBTC from faucet wallet to test wallet address
                     //store the TX hash used
-                    cryptofaucet.sendCrypto(cryptoSymbol,rxAddress,function(sendTx){
+                    cryptofaucet.sendCrypto(cryptoSymbol,rxAddress,function callback(err,sendTx){
+                        expect(err).to.be.null;
+
                         //open the faucet wallet and check the transactions
                         tbtcWallets.get({ "id": faucet_constants.FAUCET_TBTC_WALLET_ID }, function callback(err, faucetBtcWallet) {
-                            if (err) {
-                                throw err;
-                            }
+                            expect(err).to.be.null;
                             var transactionId = sendTx;
 
-
+                            console.log("transactionId = "+transactionId);
                             //https://www.bitgo.com/api/v2/#get-wallet-transfer
                             faucetBtcWallet.getTransfer({ id: transactionId })
                                 .then(function(transfer) {
                                     // print the transfer object
-                                    console.dir(transfer);
+                                    console.dir("faucetBtcWallet transfer.id = "+transfer.id);
                                     expect(transfer.id).to.equal(sendTx);
 
                                     //check that the transaction details are correct
@@ -78,12 +77,10 @@ describe("Crypto Faucet", function() {
 
                                     //check that the transaction is correctly recorded for the test wallet too
                                     tbtcWallets.get({ "id": faucet_constants.TEST_TBTC_CLIENT_WALLET_ID }, function callback(err, testBtcWallet) {
-                                        if (err) {
-                                            throw err;
-                                        }
+                                        expect(err).to.be.null;
                                         testBtcWallet.getTransfer({ id: transactionId })
                                             .then(function(transfer) {
-                                                console.log(JSON.stringify(transfer, null, 4));
+                                            console.dir("testBtcWallet transfer.id = "+transfer.id);
 
                                                 //check that the transaction id is the same as the one that cryptofaucet returned
                                                 expect(transfer.id).to.equal(sendTx);
@@ -93,9 +90,15 @@ describe("Crypto Faucet", function() {
                                                 expect(txEntries.account).to.equal(rxAddress);
                                                 expect(txEntries.value).to.equal(faucet_constants.FAUCET_SEND_AMOUNT_TBTC);
                                                 done();
+                                            }).catch(function(err) {
+                                                expect(err).to.be.null;
+                                                done();
                                             });
                                     });
 
+                                }).catch(function(err) {
+                                    expect(err).to.be.null;
+                                    done();
                                 });
 
                         });

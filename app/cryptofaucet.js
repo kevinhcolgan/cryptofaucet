@@ -20,10 +20,10 @@ exports.getBalance = function(cryptoSymbol,onComplete) {
 
             if (err) {
                 console.log("err = "+err);
-                throw err;
+                onComplete(err);
             }
             walletBalance = wallet._wallet.balance;
-            onComplete(walletBalance);
+            onComplete(null,walletBalance);
         });
     }
     else
@@ -51,7 +51,7 @@ exports.sendCrypto = function(cryptoSymbol,rxAddress,onComplete) {
         };
         tbtcWallets.get({ "id": faucet_constants.FAUCET_TBTC_WALLET_ID }, function callback(err, wallet) {
             if (err) {
-                throw err;
+                onComplete(err);
             }
 
 
@@ -60,17 +60,19 @@ exports.sendCrypto = function(cryptoSymbol,rxAddress,onComplete) {
             //console.log(JSON.stringify(wallet));
 
             wallet.send(params)
-                .then(function(transaction) {
-                    // print transaction details
-                    console.dir(transaction);
-                    txid = transaction.txid;
-                    onComplete(txid);
-                });
+            .then(function(transaction) {
+                // print transaction details
+                console.dir(transaction);
+                txid = transaction.txid;
+                onComplete(null,txid);
+            }).catch(function(e) {
+                onComplete(e);
+            });
         });
     }
     else
     {
-        onComplete(txid);
+        onComplete(null,txid);
     }
 
 
