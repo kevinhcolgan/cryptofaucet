@@ -7,14 +7,16 @@ var wallets = bitgo.coin("tbtc").wallets();
 
 describe("Crypto Faucet", function() {
     describe("Faucet initialisation", function() {
-        it("checks the balance of the Faucet is greater than 0", function() {
+        it("checks the balance of the Faucet is greater than 0", function(done) {
             //check balance of wallet is available
             var initialBalance = cryptofaucet.getBalance();
             expect(initialBalance).to.be.above(0);
+
+            done();
         });
     });
     describe("tBTC sending", function() {
-        it("sends tBTC to a valid tBTC address", function() {
+        it("sends tBTC to a test tBTC address", function(done) {
             var cryptoSymbol = "tbtc";
 
             //initialise test wallet
@@ -69,12 +71,9 @@ describe("Crypto Faucet", function() {
                 expect(txEntries.account).to.equal(rxAddress);
                 expect(txEntries.value).to.equal(faucet_constants.FAUCET_SEND_AMOUNT_TBTC);
             });
+
+            done();
         });
     });
 
-    describe("tETH sending", function() {
-        it("sends tETH to a valid tETH address", function() {
-
-        });
-    });
 });
