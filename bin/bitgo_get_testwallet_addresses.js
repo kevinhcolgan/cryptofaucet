@@ -2,7 +2,7 @@ var bitgo = require("../lib/bitgoclient");
 var constants = require("../app/faucet_constants");
 
 
-var id = constants.TEST_CLIENT_WALLET_ID;
+var id = constants.TEST_TBTC_CLIENT_WALLET_ID;
 bitgo.coin('tbtc').wallets().get({ "id": id }, function callback(err, wallet) {
     if (err) {
         throw err;

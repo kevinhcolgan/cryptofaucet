@@ -12,7 +12,7 @@ console.log(options);
 var wallets = bitgo.coin('tbtc').wallets();
 
 var walletId = options.wallet_id;
-console.log("walletId = "+walletId)
+console.log("walletId = "+walletId);
 var data = {
     "type": "bitcoin",
     "id": walletId,
