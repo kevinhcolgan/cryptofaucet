@@ -1,5 +1,5 @@
 var bitgo = require("../lib/bitgoclient");
-var constants = require("../app/faucet_constants");
+var constants = require("../lib/faucet_constants");
 
 
 var id = constants.TEST_TBTC_CLIENT_WALLET_ID;

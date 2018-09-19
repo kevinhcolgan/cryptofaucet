@@ -1,6 +1,6 @@
 var bitgo = require("../lib/bitgoclient");
 
-var faucet_constants = require("../app/faucet_constants");
+var faucet_constants = require("../lib/faucet_constants");
 var cryptofaucet = require("../app/cryptofaucet");
 var defaultCryptoSymbol = faucet_constants.TBTC_SYMBOL;
 
@@ -13,10 +13,10 @@ exports.getBalance = function(cryptoSymbol,onComplete) {
     {
 
         var useWalletId = faucet_constants.FAUCET_TBTC_WALLET_ID;
-
+        console.log("useWalletId = "+useWalletId);
         bitgo.coin(useSymbol).wallets().get({ "id": useWalletId }, function callback(err, wallet) {
             //console.log("getBalance faucet_constants.FAUCET_TBTC_WALLET_ID = "+faucet_constants.FAUCET_TBTC_WALLET_ID);
-            console.log("wallet._wallet.balance = "+wallet._wallet.balance);
+            console.log("wallet = "+JSON.stringify(wallet));
 
             if (err) {
                 console.log("err = "+err);
@@ -55,7 +55,7 @@ exports.sendCrypto = function(cryptoSymbol,rxAddress,onComplete) {
             }
 
 
-            console.log("Balance is: " + (wallet.balance() / 1e8).toFixed(4));
+            console.log("Balance is: " + (wallet._wallet.balance / 1e8).toFixed(4));
             console.log("Attempting to send : " + (params.amount / 1e8).toFixed(4));
             //console.log(JSON.stringify(wallet));
 

@@ -1,6 +1,6 @@
 var bitgo = require("../lib/bitgoclient");
 
-var faucet_constants = require("../app/faucet_constants");
+var faucet_constants = require("../lib/faucet_constants");
 
 var tbtcSymbol = faucet_constants.TBTC_SYMBOL;
 var tbtcWallets = bitgo.coin(tbtcSymbol).wallets();

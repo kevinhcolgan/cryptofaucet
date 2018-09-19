@@ -1,6 +1,8 @@
-var faucet_constants = require("../app/faucet_constants");
+var faucet_constants = require("../lib/faucet_constants");
 var expect    = require("chai").expect;
 var bitgo = require("../lib/bitgoclient");
+
+require('dotenv').config();
 
 var TBTC_FAUCET_WALLET_ID="5ba2627ee7e9cec603301e649e9901df";
 var TBTC_CLIENT_WALLET_ID="5ba22fd795b7b7a90335ca8b2b60df24";
@@ -112,6 +114,7 @@ describe("Crypto Faucet", function() {
 
         });
     });
+
 
 
 });
