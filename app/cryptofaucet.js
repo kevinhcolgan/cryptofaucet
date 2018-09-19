@@ -1,29 +1,45 @@
+var bitgo = require("../lib/bitgoclient");
+
 var faucet_constants = require("../app/faucet_constants");
 var cryptofaucet = require("../app/cryptofaucet");
 var defaultCryptoSymbol = faucet_constants.TBTC_SYMBOL;
 
 
-exports.getBalance = function(cryptoSymbol) {
+exports.getBalance = function(cryptoSymbol,onComplete) {
+
+    var walletBalance = null;
     var useSymbol = cryptoSymbol || defaultCryptoSymbol;
     if(useSymbol === faucet_constants.TBTC_SYMBOL)
     {
-        var tbtcWallets = bitgo.coin(faucet_constants.TBTC_SYMBOL).wallets();
-        tbtcWallets.get({ "id": faucet_constants.FAUCET_TBTC_WALLET_ID }, function callback(err, wallet) {
+
+        var useWalletId = faucet_constants.FAUCET_TBTC_WALLET_ID;
+
+        bitgo.coin(useSymbol).wallets().get({ "id": useWalletId }, function callback(err, wallet) {
+            //console.log("getBalance faucet_constants.FAUCET_TBTC_WALLET_ID = "+faucet_constants.FAUCET_TBTC_WALLET_ID);
+            console.log("wallet._wallet.balance = "+wallet._wallet.balance);
+
             if (err) {
+                console.log("err = "+err);
                 throw err;
             }
-            return wallet.balance();
+            walletBalance = wallet._wallet.balance;
+            onComplete(walletBalance);
         });
-
     }
+    else
+    {
+        onComplete(walletBalance);
+    }
+    //console.log("getBalance walletBalance = "+walletBalance);
     //TODO add implementation for other supported crypto symbols like tETH etc.
+
 }
 
-exports.sendCrypto = function(cryptoSymbol,rxAddress) {
+exports.sendCrypto = function(cryptoSymbol,rxAddress,onComplete) {
     //https://www.bitgo.com/api/v2/#send-transaction
 
+    var txid = null;
     var useSymbol = cryptoSymbol || defaultCryptoSymbol;
-    var tx = null;
     if(useSymbol === faucet_constants.TBTC_SYMBOL)
     {
         var tbtcWallets = bitgo.coin(faucet_constants.TBTC_SYMBOL).wallets();
@@ -47,8 +63,14 @@ exports.sendCrypto = function(cryptoSymbol,rxAddress) {
                 .then(function(transaction) {
                     // print transaction details
                     console.dir(transaction);
+                    txid = transaction.txid;
+                    onComplete(txid);
                 });
         });
+    }
+    else
+    {
+        onComplete(txid);
     }
 
 

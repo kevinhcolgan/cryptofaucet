@@ -4,7 +4,7 @@
   "description": "Faucet for test cryptocurrencies from a pre-loaded wallet",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --reporter spec"
+    "test": "./node_modules/.bin/mocha --reporter spec"
   },
   "author": "Kevin Colgan",
   "license": "ISC",

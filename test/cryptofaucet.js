@@ -1,5 +1,19 @@
-var expect    = require("chai").expect;
 var faucet_constants = require("../app/faucet_constants");
+var expect    = require("chai").expect;
+var bitgo = require("../lib/bitgoclient");
+
+var TBTC_FAUCET_WALLET_ID="5ba2627ee7e9cec603301e649e9901df";
+var TBTC_CLIENT_WALLET_ID="5ba22fd795b7b7a90335ca8b2b60df24";
+var TBTC_FAUCET_WALLET_ADDRESS="2MsocUszkXN5nhtuMqB469jwqM15RfVHzDB";
+
+faucet_constants.TBTC_SYMBOL = "tbtc";
+faucet_constants.FAUCET_TBTC_WALLET_ID = TBTC_FAUCET_WALLET_ID;
+faucet_constants.FAUCET_TBTC_WALLET_ADDRESS = TBTC_FAUCET_WALLET_ADDRESS;
+faucet_constants.TEST_TBTC_CLIENT_WALLET_ID = TBTC_CLIENT_WALLET_ID;
+faucet_constants.FAUCET_SEND_AMOUNT_TBTC = 0.001;
+
+
+
 var cryptofaucet = require("../app/cryptofaucet");
 
 var tbtcSymbol = faucet_constants.TBTC_SYMBOL;
@@ -7,74 +21,94 @@ var tbtcWallets = bitgo.coin(tbtcSymbol).wallets();
 
 
 describe("Crypto Faucet", function() {
+    this.timeout(10000);
     describe("tBTC Faucet initialisation", function() {
         it("checks the balance of the TBTC Faucet is greater than 0", function(done) {
             //check balance of wallet is available
-            var initialBalance = cryptofaucet.getBalance(tbtcSymbol);
-            expect(initialBalance).to.be.above(0);
-
-            done();
+            cryptofaucet.getBalance(tbtcSymbol,function(walletBalance)
+            {
+                console.log("walletBalance = "+walletBalance)
+                expect(walletBalance).to.be.above(0);
+                done();
+            });
         });
     });
+
     describe("tBTC sending", function() {
         it("sends tBTC to a test tBTC address", function(done) {
             var cryptoSymbol = "tbtc";
 
             //initialise test wallet
-            var testBtcWallet = tbtcWallets.get({ "id": faucet_constants.TEST_TBTC_CLIENT_WALLET_ID }, function callback(err, wallet) {
+            tbtcWallets.get({ "id": faucet_constants.TEST_TBTC_CLIENT_WALLET_ID }, function callback(err, testBtcWallet) {
                 if (err) {
                     throw err;
                 }
-            });;
+                //create a test wallet address to receive crypto to
+                var rxAddress;
+                //https://www.bitgo.com/api/v2/#create-wallet-address
+                testBtcWallet.createAddress({ "chain": 0 }, function callback(err, address) {
+                    if (err) {
+                        throw err;
+                    }
+                    console.dir(address);
+                    rxAddress = address.address;
+
+                    //send a small amount of tBTC from faucet wallet to test wallet address
+                    //store the TX hash used
+                    cryptofaucet.sendCrypto(cryptoSymbol,rxAddress,function(sendTx){
+                        //open the faucet wallet and check the transactions
+                        tbtcWallets.get({ "id": faucet_constants.FAUCET_TBTC_WALLET_ID }, function callback(err, faucetBtcWallet) {
+                            if (err) {
+                                throw err;
+                            }
+                            var transactionId = sendTx;
 
 
-            //create a test wallet address to receive crypto to
-            var rxAddress;
-            testBtcWallet.createAddress({ "chain": 0 }, function callback(err, address) {
-                console.dir(address);
-                rxAddress = address;
+                            //https://www.bitgo.com/api/v2/#get-wallet-transfer
+                            faucetBtcWallet.getTransfer({ id: transactionId })
+                                .then(function(transfer) {
+                                    // print the transfer object
+                                    console.dir(transfer);
+                                    expect(transfer.id).to.equal(sendTx);
+
+                                    //check that the transaction details are correct
+                                    var txOutput = transfer.outputs[0];
+                                    expect(txOutput.account).to.equal(rxAddress);
+                                    expect(txOutput.value).to.equal(faucet_constants.FAUCET_SEND_AMOUNT_TBTC);
+
+                                    //check that the transaction is correctly recorded for the test wallet too
+                                    tbtcWallets.get({ "id": faucet_constants.TEST_TBTC_CLIENT_WALLET_ID }, function callback(err, testBtcWallet) {
+                                        if (err) {
+                                            throw err;
+                                        }
+                                        testBtcWallet.getTransfer({ id: transactionId })
+                                            .then(function(transfer) {
+                                                console.log(JSON.stringify(transfer, null, 4));
+
+                                                //check that the transaction id is the same as the one that cryptofaucet returned
+                                                expect(transfer.id).to.equal(sendTx);
+
+                                                //check that the transaction details are correct
+                                                var txEntries = transfer.entries[0];
+                                                expect(txEntries.account).to.equal(rxAddress);
+                                                expect(txEntries.value).to.equal(faucet_constants.FAUCET_SEND_AMOUNT_TBTC);
+                                                done();
+                                            });
+                                    });
+
+                                });
+
+                        });
+                    });
+
+
+                });
+
             });
 
-            //send a small amount of tBTC from faucet wallet to test wallet address
-            //store the TX hash used
-            var sendTx = cryptofaucet.sendCrypto(cryptoSymbol,rxAddress);
 
-            //check that the faucet wallet has a pending transaction for the testAddress
-            var faucetBtcWallet = tbtcWallets.get({ "id": faucet_constants.FAUCET_TBTC_WALLET_ID }, function callback(err, wallet) {
-                if (err) {
-                    throw err;
-                }
-            });
-            var transactionId = sendTx;
-
-            //https://bitgo.github.io/bitgo-docs/#get-wallet-transaction
-            faucetBtcWallet.getTransaction({ "id": transactionId }, function callback(err, transaction) {
-                console.log(JSON.stringify(transaction, null, 4));
-
-                //check that the transaction id is the same as the one that cryptofaucet returned
-                expect(transaction.id).to.equal(sendTx);
-
-                //check that the transaction details are correct
-                var txOutput = transaction.outputs[0];
-                expect(txOutput.account).to.equal(rxAddress);
-                expect(txOutput.value).to.equal(faucet_constants.FAUCET_SEND_AMOUNT_TBTC);
-            });
-
-            //check that the transaction is correctly recorded for the test wallet
-            testBtcWallet.getTransaction({ "id": transactionId }, function callback(err, transaction) {
-                console.log(JSON.stringify(transaction, null, 4));
-
-                //check that the transaction id is the same as the one that cryptofaucet returned
-                expect(transaction.id).to.equal(sendTx);
-
-                //check that the transaction details are correct
-                var txEntries = transaction.entries[0];
-                expect(txEntries.account).to.equal(rxAddress);
-                expect(txEntries.value).to.equal(faucet_constants.FAUCET_SEND_AMOUNT_TBTC);
-            });
-
-            done();
         });
     });
+
 
 });

@@ -17,6 +17,7 @@
   balance: 9375000 }
 
  */
+
 module.exports={
     TBTC_SYMBOL:"tbtc",
     FAUCET_TBTC_WALLET_ID:process.env.TBTC_FAUCET_WALLET_ID,
