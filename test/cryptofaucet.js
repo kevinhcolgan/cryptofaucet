@@ -2,14 +2,15 @@ var expect    = require("chai").expect;
 var faucet_constants = require("../app/faucet_constants");
 var cryptofaucet = require("../app/cryptofaucet");
 
-var wallets = bitgo.coin("tbtc").wallets();
+var tbtcSymbol = faucet_constants.TBTC_SYMBOL;
+var tbtcWallets = bitgo.coin(tbtcSymbol).wallets();
 
 
 describe("Crypto Faucet", function() {
-    describe("Faucet initialisation", function() {
-        it("checks the balance of the Faucet is greater than 0", function(done) {
+    describe("tBTC Faucet initialisation", function() {
+        it("checks the balance of the TBTC Faucet is greater than 0", function(done) {
             //check balance of wallet is available
-            var initialBalance = cryptofaucet.getBalance();
+            var initialBalance = cryptofaucet.getBalance(tbtcSymbol);
             expect(initialBalance).to.be.above(0);
 
             done();
@@ -20,7 +21,7 @@ describe("Crypto Faucet", function() {
             var cryptoSymbol = "tbtc";
 
             //initialise test wallet
-            var testWallet = wallets.get({ "id": faucet_constants.TEST_CLIENT_WALLET_ID }, function callback(err, wallet) {
+            var testBtcWallet = tbtcWallets.get({ "id": faucet_constants.TEST_TBTC_CLIENT_WALLET_ID }, function callback(err, wallet) {
                 if (err) {
                     throw err;
                 }
@@ -29,7 +30,7 @@ describe("Crypto Faucet", function() {
 
             //create a test wallet address to receive crypto to
             var rxAddress;
-            testWallet.createAddress({ "chain": 0 }, function callback(err, address) {
+            testBtcWallet.createAddress({ "chain": 0 }, function callback(err, address) {
                 console.dir(address);
                 rxAddress = address;
             });
@@ -39,15 +40,15 @@ describe("Crypto Faucet", function() {
             var sendTx = cryptofaucet.sendCrypto(cryptoSymbol,rxAddress);
 
             //check that the faucet wallet has a pending transaction for the testAddress
-            var faucetWallet = wallets.get({ "id": faucet_constants.FAUCET_WALLET_ID }, function callback(err, wallet) {
+            var faucetBtcWallet = tbtcWallets.get({ "id": faucet_constants.FAUCET_TBTC_WALLET_ID }, function callback(err, wallet) {
                 if (err) {
                     throw err;
                 }
-            });;
+            });
             var transactionId = sendTx;
 
             //https://bitgo.github.io/bitgo-docs/#get-wallet-transaction
-            faucetWallet.getTransaction({ "id": transactionId }, function callback(err, transaction) {
+            faucetBtcWallet.getTransaction({ "id": transactionId }, function callback(err, transaction) {
                 console.log(JSON.stringify(transaction, null, 4));
 
                 //check that the transaction id is the same as the one that cryptofaucet returned
@@ -60,7 +61,7 @@ describe("Crypto Faucet", function() {
             });
 
             //check that the transaction is correctly recorded for the test wallet
-            testWallet.getTransaction({ "id": transactionId }, function callback(err, transaction) {
+            testBtcWallet.getTransaction({ "id": transactionId }, function callback(err, transaction) {
                 console.log(JSON.stringify(transaction, null, 4));
 
                 //check that the transaction id is the same as the one that cryptofaucet returned
