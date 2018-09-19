@@ -1,0 +1,32 @@
+{
+  "name": "cryptofaucet",
+  "version": "1.0.0",
+  "description": "Faucet for test cryptocurrencies from a pre-loaded wallet",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --reporter spec"
+  },
+  "author": "Kevin Colgan",
+  "license": "ISC",
+  "dependencies": {
+    "chai": "^4.1.2",
+    "express": "^4.16.3",
+    "mocha": "^5.2.0",
+    "request": "^2.88.0"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kevinhcolgan/cryptofaucet.git"
+  },
+  "keywords": [
+    "faucet"
+  ],
+  "bugs": {
+    "url": "https://github.com/kevinhcolgan/cryptofaucet/issues"
+  },
+  "homepage": "https://github.com/kevinhcolgan/cryptofaucet#readme"
+}
