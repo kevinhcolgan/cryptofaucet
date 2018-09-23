@@ -24,7 +24,11 @@ class App extends Component {
         const data = this.state;
         return (
             <div className="App">
-                <form className={'faucet'} id="faucet" onSubmit={this.handleSubmit}>
+                <h1>'CryptoFaucet tBTC available: '
+                    <span className='balance'>{data.balance ? `${data.balance}` : '-'}</span>
+                </h1>
+                <form className={'faucet'} id="faucet-request" onSubmit={this.handleSubmit}>
+                        <button type='submit' disabled={data.isLoading}>Submit</button>
                 </form>
             </div>
         );
