@@ -14,6 +14,12 @@ class App extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
+    componentDidMount() {
+        fetch('/api/getBalance')
+            .then(res => res.json())
+            .then(data => this.setState({ balance: data.balance, address: null, txid: null }));
+    }
+
     handleSubmit(event) {
         this.setState(() => ({
             isLoading: true
@@ -24,15 +30,20 @@ class App extends Component {
         const data = this.state;
         return (
             <div className="App">
-                <h1>'CryptoFaucet tBTC available: '
-                    <span className='balance'>{data.balance ? `${data.balance}` : '-'}</span>
+                <h1>CryptoFaucet tBTC available:
+                    <span className='balance'>{data.balance ? ` ${data.balance} ` : ' - '}</span>
                 </h1>
-                <form className={'faucet'} id="faucet-request" onSubmit={this.handleSubmit}>
+                <form className='faucet' id="faucet-request" onSubmit={this.handleSubmit}>
+                    <input type="hidden" name="cryptoSymbol" id="cryptoSymbol" />
+                    <label htmlFor="address">
+                        Address:
+                        <input type="text" id="address" name="address" onChange={this.handleAddressChange}/>
+                    </label>
                     <input type='hidden' className='txid' value={data.txid || ''}/>
                     <button type='submit' disabled={data.isLoading}>Submit</button>
                 </form>
 
-                <div className='status-message'>{data.statusMessage ? `${data.statusMessage}` : ''}</div>
+                <p className='status-message'>{data.statusMessage ? `${data.statusMessage}` : ''}</p>
 
             </div>
         );
