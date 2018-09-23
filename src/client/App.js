@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 
 class App extends Component {
@@ -12,13 +11,23 @@ class App extends Component {
             statusMessage: null,
             appStatus: null
         };
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    handleSubmit(event) {
+        this.setState(() => ({
+            isLoading: true
+        }));
+        event.preventDefault();
     }
     render() {
+        const data = this.state;
         return (
             <div className="App">
-            This is a test
-        </div>
-    );
+                <form className={'faucet'} id="faucet" onSubmit={this.handleSubmit}>
+                </form>
+            </div>
+        );
     }
 }
 
