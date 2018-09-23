@@ -1,5 +1,9 @@
-var bitgo = require("../lib/bitgoclient");
-bitgo.session({}, function(err,res) {
-    console.dir(err);
-    console.dir(res);
+var cryptofaucet = require("../app/cryptofaucet");
+
+cryptofaucet.testSession((err,res) => {
+    if (err) {
+        console.log("err = "+err);
+        onComplete(err);
+    }
+    console.log(res);
 });

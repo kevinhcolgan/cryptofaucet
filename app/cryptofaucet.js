@@ -5,6 +5,40 @@ var cryptofaucet = require("../app/cryptofaucet");
 var defaultCryptoSymbol = faucet_constants.TBTC_SYMBOL;
 
 
+exports.testSession  = function(onComplete) {
+    bitgo.session({}, function(err,res) {
+        if (err) {
+            console.error("err = "+err);
+            onComplete(err);
+        }
+        else {
+            onComplete(null,res);
+        }
+    });
+}
+exports.getWallets = function(cryptoSymbol,onComplete) {
+    var walletsList = [];
+    bitgo.coin(cryptoSymbol).wallets().list({}, function callback(err, data) {
+        if (err) {
+            console.error("err = "+err);
+            onComplete(err);
+        }
+        for (var id in data.wallets) {
+            //console.dir("data.wallets["+id+"] = "+JSON.stringify(data.wallets[id]));
+            var wallet = data.wallets[id]._wallet;
+            var shortenedObj = {
+                "id":wallet.id,
+                "label":wallet.label,
+                //"latest_address":wallet.receiveAddress.address,
+                "balance":wallet.balance
+            };
+            walletsList.push(shortenedObj);
+            //console.log(shortenedObj);
+
+        }
+        onComplete(null,walletsList);
+    });
+}
 exports.getBalance = function(cryptoSymbol,onComplete) {
 
     var walletBalance = null;
