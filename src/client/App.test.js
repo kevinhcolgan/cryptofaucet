@@ -4,7 +4,7 @@ require('./setupTests');
 import App from './App';
 mport { shallow, mount, render } from 'enzyme';
 import LoadingIndicator from "./LoadingIndicator";
-
+const faucetConstants = require('../lib/faucet_constants')
 
 
 //example setup for timers: https://medium.com/capital-one-developers/unit-testing-behavior-of-react-components-with-test-driven-development-ae15b03a3689
@@ -68,6 +68,20 @@ describe('App', () => {
             wrapper.setState({ statusMessage: statusTestText});
 
             expect(wrapper.find('.status-message')).text().to.equal(statusTestText);
+
+            wrapper.unmount();
+        });
+        it("the transaction id should show when a faucet request returns successfully", () => {
+
+            const wrapper = mount(<App />);
+
+            expect(wrapper.find('.txid')).to.have.lengthOf(0);
+
+            let successStatus = APP_STATUS.TX_SUCCESS;
+            let testTxId = "osidf8ysdfjsdjfs8df9u";
+
+            expect(wrapper.exists('.txid')).to.equal(true);
+            expect(wrapper.find('.txid')).text().to.equal(testTxId);
 
             wrapper.unmount();
         });
