@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 require('./setupTests');
 import App from './App';
-mport { shallow, mount, render } from 'enzyme';
+import { shallow, mount, render } from 'enzyme';
 import LoadingIndicator from "./LoadingIndicator";
 const faucetConstants = require('../lib/faucet_constants')
 
