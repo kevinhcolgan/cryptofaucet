@@ -16,7 +16,6 @@ describe('App', () => {
         //example of testing fetch with promise here https://github.com/airbnb/enzyme/issues/346
         it("the balance should only be available once the fetch call completes", () => {
             const wrapper = mount(<App />);
-            console.log("wrapper.find('.balance') = "+expect(wrapper.find('.balance').text()));
             expect(wrapper.find('.balance').length).to.equal(1);
 
             expect(wrapper.find('.balance').text()).to.equal('-');
@@ -38,7 +37,6 @@ describe('App', () => {
             var renderedForm = wrapper.find('form.faucet');
             expect(renderedForm.length).to.equal(1);
             renderedForm.simulate('submit');
-            console.log(`renderedForm.find('[type=\"submit\"]').props() = ${JSON.stringify(renderedForm.find('[type="submit"]').props())}` );
 
             wrapper.unmount();
         });
@@ -46,27 +44,26 @@ describe('App', () => {
         it("a message should be shown when a faucet request returns", () => {
 
             const wrapper = mount(<App />);
-
-            expect(wrapper.find('.status-message')).to.have.lengthOf(0);
+            expect(wrapper.find('.status-message').text()).to.equal('');
 
             let statusTestText = 'test status message';
             wrapper.setState({ statusMessage: statusTestText});
-
             expect(wrapper.find('.status-message').text()).to.equal(statusTestText);
 
             wrapper.unmount();
         });
-        it("the transaction id should show when a faucet request returns successfully", () => {
+        it("the transaction id should be available when a faucet request returns successfully", () => {
 
             const wrapper = mount(<App />);
 
-            expect(wrapper.find('.txid')).to.have.lengthOf(0);
+            expect(wrapper.find('.txid')).to.have.lengthOf(1);
 
-            let successStatus = APP_STATUS.TX_SUCCESS;
+            let successStatus = faucetConstants.APP_STATUS.TX_SUCCESS;
             let testTxId = "osidf8ysdfjsdjfs8df9u";
 
-            expect(wrapper.exists('.txid')).to.equal(true);
-            expect(wrapper.find('.txid').text()).to.equal(testTxId);
+            wrapper.setState({ txid: testTxId});
+
+            expect(wrapper.find('.txid').props().value).to.equal(testTxId);
 
             wrapper.unmount();
         });

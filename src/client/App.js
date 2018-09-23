@@ -28,8 +28,12 @@ class App extends Component {
                     <span className='balance'>{data.balance ? `${data.balance}` : '-'}</span>
                 </h1>
                 <form className={'faucet'} id="faucet-request" onSubmit={this.handleSubmit}>
-                        <button type='submit' disabled={data.isLoading}>Submit</button>
+                    <input type='hidden' className='txid' value={data.txid || ''}/>
+                    <button type='submit' disabled={data.isLoading}>Submit</button>
                 </form>
+
+                <div className='status-message'>{data.statusMessage ? `${data.statusMessage}` : ''}</div>
+
             </div>
         );
     }
