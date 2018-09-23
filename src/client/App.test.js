@@ -13,21 +13,6 @@ describe('App', () => {
         expect(shallow(<App />).find('form.faucet').exists()).toBe(true)
     });
     describe('when the page loads', () => {
-        it('ensures the state is set', () => {
-            const promise = Promise.resolve(mockData);
-            sinon.stub(global, 'fetch', () => promise);
-
-            const wrapper = mount(<App />);
-
-            return promise.then(() => {
-                expect(wrapper.state()).to.have.property('dataReady', true);
-
-                wrapper.update();
-            }).then(() => {
-                expect(wrapper.text()).to.contain('data is ready');
-            });
-        });
-
         //example of testing fetch with promise here https://github.com/airbnb/enzyme/issues/346
         it("the balance should only be available once the fetch call completes", () => {
             const wrapper = mount(<App />);
