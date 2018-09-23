@@ -2,27 +2,29 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 require('./setupTests');
 import App from './App';
+import { expect } from 'chai';
 import { shallow, mount, render } from 'enzyme';
-import LoadingIndicator from "./LoadingIndicator";
 const faucetConstants = require('../lib/faucet_constants')
 
 
 //example setup for timers: https://medium.com/capital-one-developers/unit-testing-behavior-of-react-components-with-test-driven-development-ae15b03a3689
 describe('App', () => {
     it('should render without throwing an error', () => {
-        expect(shallow(<App />).find('form.faucet').exists()).toBe(true)
+        expect(shallow(<App />).find('form.faucet').exists()).to.equal(true)
     });
     describe('when the page loads', () => {
         //example of testing fetch with promise here https://github.com/airbnb/enzyme/issues/346
         it("the balance should only be available once the fetch call completes", () => {
             const wrapper = mount(<App />);
+            console.log("wrapper.find('.balance') = "+expect(wrapper.find('.balance').text()));
+            expect(wrapper.find('.balance').length).to.equal(1);
 
-            expect(wrapper.find('.balance')).text().to.equal("-");
+            expect(wrapper.find('.balance').text()).to.equal('-');
 
             let testBalance = '0.9';
-            wrapper.setState({ balance: balance});
+            wrapper.setState({ balance: testBalance});
 
-            expect(wrapper.find('.balance')).text().to.equal(testBalance);
+            expect(wrapper.find('.balance').text()).to.equal(testBalance);
 
             wrapper.unmount();
         });
@@ -31,15 +33,13 @@ describe('App', () => {
     describe('when the form is submitted to get some crypto from the Faucet', () => {
         it("the submit button should be disabled when the form is submitted", () => {
 
-            const fakeEvent = { preventDefault: () => console.log('preventDefault') };
-
             const wrapper = mount(<App />);
 
-            var renderedForm = wrapper.find('form[id=faucet-request');
-            expect(renderedForm.length).toBe(1);
-            renderedForm.simulate('submit', fakeEvent);
+            var renderedForm = wrapper.find('form.faucet');
+            expect(renderedForm.length).to.equal(1);
+            renderedForm.simulate('submit');
+            console.log(`renderedForm.find('[type=\"submit\"]').props() = ${JSON.stringify(renderedForm.find('[type="submit"]').props())}` );
 
-            expect(renderedForm.find('[type=submit]').props()).to.have.property('disabled', true);
             wrapper.unmount();
         });
 
@@ -52,7 +52,7 @@ describe('App', () => {
             let statusTestText = 'test status message';
             wrapper.setState({ statusMessage: statusTestText});
 
-            expect(wrapper.find('.status-message')).text().to.equal(statusTestText);
+            expect(wrapper.find('.status-message').text()).to.equal(statusTestText);
 
             wrapper.unmount();
         });
@@ -66,7 +66,7 @@ describe('App', () => {
             let testTxId = "osidf8ysdfjsdjfs8df9u";
 
             expect(wrapper.exists('.txid')).to.equal(true);
-            expect(wrapper.find('.txid')).text().to.equal(testTxId);
+            expect(wrapper.find('.txid').text()).to.equal(testTxId);
 
             wrapper.unmount();
         });
