@@ -17,6 +17,7 @@ console.log(`walletId = ${walletId}`);
 
 bitgo.coin('tbtc').wallets().get({ id: walletId }, (err, wallet) => {
   if (err) {
+    console.error(`err = ${err}`);
     throw err;
   }
   wallet.createAddress({ chain: 0 }, (err, address) => {
