@@ -25,7 +25,7 @@ const tbtcWallets = bitgo.coin(tbtcSymbol).wallets();
 
 describe('Crypto Faucet', function () {
   // the tests take quite long, so increase the default to 10 seconds
-  this.timeout(20000);
+  this.timeout(40000);
   describe('tBTC Faucet initialisation', () => {
     it('checks the balance of the TBTC Faucet is greater than 0', (done) => {
       // check balance of wallet is available
@@ -78,8 +78,6 @@ describe('Crypto Faucet', function () {
                   expect(txOutput.account).to.equal(rxAddress);
                   expect(txOutput.value).to.equal(faucetConstants.FAUCET_SEND_AMOUNT_TBTC);
 
-                  // check that the transaction is correctly recorded for the test wallet too
-                  console.dir(`testing that the trasaction ${transfer.id} is in test wallet too`);
                   bitgo.coin(tbtcSymbol).wallets().get({ id: faucetConstants.TEST_TBTC_CLIENT_WALLET_ID }, (err, testBtcWallet) => {
                     expect(err).to.be.null;
                     console.log(`testBtcWallet = ${JSON.stringify(testBtcWallet)}`);
