@@ -5,25 +5,37 @@ import App from './App';
 import { expect } from 'chai';
 import { shallow, mount, render } from 'enzyme';
 const faucetConstants = require('../lib/faucet_constants')
+//global.fetch = require('jest-fetch-mock')
 
 
-//example setup for timers: https://medium.com/capital-one-developers/unit-testing-behavior-of-react-components-with-test-driven-development-ae15b03a3689
 describe('App', () => {
+    //mock componentDidMount so we don't have fetch calls triggered
     it('should render without throwing an error', () => {
-        expect(shallow(<App />).find('form.faucet').exists()).to.equal(true)
+        let ComponentTest = class extends App {
+            componentDidMount() {
+                // your override here
+            }
+        };
+        expect(shallow(<ComponentTest />).find('form.faucet').exists()).to.equal(true)
     });
+
     describe('when the page loads', () => {
         //example of testing fetch with promise here https://github.com/airbnb/enzyme/issues/346
         it("the balance should only be available once the fetch call completes", () => {
-            const wrapper = mount(<App />);
+            let ComponentTest = class extends App {
+                componentDidMount() {
+                    // your override here
+                }
+            };
+            const wrapper = mount(<ComponentTest />);
             expect(wrapper.find('.balance').length).to.equal(1);
 
-            expect(wrapper.find('.balance').text()).to.equal('-');
+            expect(wrapper.find('.balance').text()).to.equal(' - ');
 
             let testBalance = '0.9';
             wrapper.setState({ balance: testBalance});
 
-            expect(wrapper.find('.balance').text()).to.equal(testBalance);
+            expect(wrapper.find('.balance').text().trim()).to.equal(testBalance.trim());
 
             wrapper.unmount();
         });
@@ -31,19 +43,29 @@ describe('App', () => {
     });
     describe('when the form is submitted to get some crypto from the Faucet', () => {
         it("the submit button should be disabled when the form is submitted", () => {
-
-            const wrapper = mount(<App />);
-
+            let ComponentTest = class extends App {
+                componentDidMount() {
+                    // your override here
+                }
+            };
+            const wrapper = mount(<ComponentTest />);
+            const addressInput = wrapper.find("#address")
+            addressInput.instance().value = "test address"
             var renderedForm = wrapper.find('form.faucet');
             expect(renderedForm.length).to.equal(1);
             renderedForm.simulate('submit');
+            console.log(`renderedForm.find('[type=\"submit\"]').props() = ${JSON.stringify(renderedForm.find('[type="submit"]').props())}` );
 
             wrapper.unmount();
         });
 
         it("a message should be shown when a faucet request returns", () => {
-
-            const wrapper = mount(<App />);
+            let ComponentTest = class extends App {
+                componentDidMount() {
+                    // your override here
+                }
+            };
+            const wrapper = mount(<ComponentTest />);
             expect(wrapper.find('.status-message').text()).to.equal('');
 
             let statusTestText = 'test status message';
@@ -54,7 +76,12 @@ describe('App', () => {
         });
         it("the transaction id should be available when a faucet request returns successfully", () => {
 
-            const wrapper = mount(<App />);
+            let ComponentTest = class extends App {
+                componentDidMount() {
+                    // your override here
+                }
+            };
+            const wrapper = mount(<ComponentTest />);
 
             expect(wrapper.find('.txid')).to.have.lengthOf(1);
 
@@ -68,4 +95,5 @@ describe('App', () => {
             wrapper.unmount();
         });
     });
+
 });
