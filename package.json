@@ -1,6 +1,6 @@
 {
   "name": "cryptofaucet",
-  "version": "1.0.0",
+  "version": "0.2.0",
   "description": "Simple app to distribute small amounts of cryptocurrency",
   "main": "src/server/index.js",
   "scripts": {
