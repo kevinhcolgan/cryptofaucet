@@ -131,10 +131,12 @@ class App extends Component {
 
                     </form>
 
-                    <p className={data.statusCode ? `formElement status-message ${data.statusCode}` : 'formElement status-message'}>
+                    <div className={data.statusCode ? `formElement status-message ${data.statusCode}` : 'formElement status-message'}>
                         {data.isLoading ? <LoadingSpinner /> : ''}
                         {data.statusCode ? this.getStatusIcon(data.statusCode,data.isLoading) : ''}
-                        {data.statusMessage ? `${data.statusMessage}` : ''}</p>
+                        {data.statusMessage ? `${data.statusMessage}` : ''}
+                        {data.txid ? <p>You can view the transaction here: <a target="_blank" href={`https://live.blockcypher.com/btc-testnet/tx/${data.txid}/`}>https://live.blockcypher.com/btc-testnet/tx/{data.txid}/</a></p> : ''}
+                        </div>
                 </div>
             </div>
         );

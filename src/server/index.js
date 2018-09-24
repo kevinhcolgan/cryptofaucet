@@ -41,6 +41,7 @@ app.get('/api/sendCrypto', (req, res) => {
 
     let retObj = { txid };
     retObj.statusCode = faucetConstants.APP_STATUS.TX_SUCCESS;
+
     retObj.statusMessage = `Successfully sent ${faucetConstants.FAUCET_SEND_AMOUNT_TBTC} to ${clientAddress}`;
     retObj.address = clientAddress;
     if (err) {
