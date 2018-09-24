@@ -20,6 +20,9 @@
 require('dotenv').config();
 
 module.exports = {
+  TX_ERRORS: {
+    INVALID_ADDRESS: 'invalid address'
+  },
   APP_STATUS: {
     INVALID_BITGO_TOKEN: 'invalid_bitgo_token',
     TX_SUCCESS: 'tx_success',
