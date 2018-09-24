@@ -106,9 +106,8 @@ class App extends Component {
         const data = this.state;
         return (
             <div className="App">
-                <h1>CryptoFaucet tBTC available:
-                    <span className='balance'>{data.balance ? ` ${data.balance} ` : data.isLoading ? <LoadingSpinner /> : ' - '}</span>
-                </h1>
+                <h1>CryptoFaucet Faucet</h1>
+                <h4>Just enter your Bitcoin testnet address to get a small amount of free tBTC</h4>
                 <div className={'faucetFormContainer'}>
                     <form className='faucet' id="faucet-request" onSubmit={this.handleSubmit}>
                         <div className={'formElement'}>
@@ -118,6 +117,11 @@ class App extends Component {
                                     <option value='tbtc'>TBTC</option>
                                 </select>
                             </label>
+
+                        </div>
+                        <div className={'formElement'}>
+                            <p>Available balance: <strong><span className='balance'>{data.balance ? ` ${data.balance} ` : data.isLoading ? <LoadingSpinner /> : ' - '}</span></strong>
+                            </p>
                         </div>
                         <div className={'formElement'}>
                             <label htmlFor="address">
