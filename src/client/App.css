@@ -27,6 +27,18 @@
   to { transform: rotate(360deg); }
 }
 
+.faucetFormContainer {
+  width: 40em;
+  margin: 0 auto;
+}
 .faucet [name=address] {
-  width: 500px;
+  width: 30em;
+}
+
+.status-message svg {
+  margin-right: 0.4em;
+}
+.formElement {
+  text-align: left;
+  padding: 0.4em;
 }
